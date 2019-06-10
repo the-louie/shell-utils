@@ -1,6 +1,6 @@
 #! /bin/sh
 
-ADDR=$(host rorets.se|grep "has address")
+ADDR=$(host $1|grep "has address")
 if [ -z "$ADDR" ]; then
   exit;
 fi
