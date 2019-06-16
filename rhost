@@ -1,11 +1,31 @@
 #! /bin/sh
 
+function usage {
+  echo "Usage: rhost [-q] fqdn"
+  exit 1
+}
+
+while getopts q: option; do
+  case "${option}" in
+    q) QUIET=1;shift;;
+    *) usage;;
+  esac
+done
+
 ADDR=$(host $1|grep "has address")
 if [ -z "$ADDR" ]; then
   exit;
 fi
-echo $ADDR
+if [ -z "${QUIET}" ]; then
+  echo $ADDR
+fi
+
 IP=$(echo "$ADDR" | sed -n 's/^.*has address //p')
 if [ -n "$IP" ]; then
-  host "$IP"
+  HOST=$(host "$IP")
+  if [ -z "$QUIET" ]; then
+    echo $HOST
+  else
+    echo $(echo $HOST|sed -n 's/^.*domain name pointer //p')
+  fi
 fi
