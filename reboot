@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+if [ -z "$1" ]; then
+    echo "Usage: reboot <hostname>"
+    exit 1
+fi 
+
+if [ "$1" != $(hostname) ]; then
+    echo "Error: Hostname missmatch, current hostname is $(hostname)"
+    exit 2
+fi
+
+sudo reboot
