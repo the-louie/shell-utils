@@ -28,4 +28,10 @@ if [ -n "$IP" ]; then
   else
     echo $(echo $HOST|sed -n 's/^.*domain name pointer //p')
   fi
+
+  AS=$(whois "$IP" | grep -oh "AS[0-9]\+")
+  if [ -n "$AS" ]; then
+    ORG=$(whois "$AS" | grep OrgName)
+    echo $ORG
+  fi
 fi
