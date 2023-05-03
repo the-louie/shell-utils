@@ -12,7 +12,11 @@ while getopts q: option; do
   esac
 done
 
-ADDR=$(host $1|grep "has address")
+# ta bort https osv
+HOST1=${1/http*:\/\//}
+HOST=${HOST1/\/*/}
+
+ADDR=$(host $HOST|grep "has address")
 if [ -z "$ADDR" ]; then
   exit;
 fi
