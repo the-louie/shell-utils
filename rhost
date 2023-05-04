@@ -20,22 +20,34 @@ ADDR=$(host $HOST|grep "has address")
 if [ -z "$ADDR" ]; then
   exit;
 fi
-if [ -z "${QUIET}" ]; then
-  echo $ADDR
-fi
 
-IP=$(echo "$ADDR" | sed -n 's/^.*has address //p')
-if [ -n "$IP" ]; then
-  HOST=$(host "$IP")
-  if [ -z "$QUIET" ]; then
-    echo $HOST
-  else
-    echo $(echo $HOST|sed -n 's/^.*domain name pointer //p')
+IFS=$'\n'
+IFS=$'\n';
+for ADDR in $(host $HOST|grep "has address"); do 
+  if [ -z "${QUIET}" ]; then
+    echo "IP: $ADDR"
   fi
+  IP=$(echo "$ADDR" | sed -n 's/^.*has address //p')
+  if [ -n "$IP" ]; then
+    HOST=$(host "$IP")
+    if [ -z "$QUIET" ]; then
+      echo "Reverse: "$(echo $HOST|sed -n 's/^.*domain name pointer //p')
+    else
+      echo $(echo $HOST|sed -n 's/^.*domain name pointer //p')
+    fi
 
-  AS=$(whois "$IP" | grep -oh "AS[0-9]\+")
-  if [ -n "$AS" ]; then
-    ORG=$(whois "$AS" | grep OrgName)
-    echo $ORG
+    AS=$(whois "$IP" | grep -oh "AS[0-9]\+" | tail -1)
+    if [ -n "$AS" ]; then
+      echo "AS-num: $AS"
+      ORG=$(whois "$AS" | grep -i -e OrgName -e org-name: | tr -s ' ')
+      echo $ORG
+    fi
   fi
-fi
+  echo ""
+done
+exit
+
+
+echo "---"
+echo "$ADDR"
+echo "^^^^"
